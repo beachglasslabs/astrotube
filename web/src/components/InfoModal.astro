@@ -1,0 +1,50 @@
+---
+import PlayButton from './PlayButton.astro';
+---
+
+<div class="z-50 transition duration-300 bg-black bg-opacity-80 flex justify-center items-center overflow-x-hidden overflow-y-auto fixed inset-0" x-show="$store.modal.visible">
+  <div class="relative w-auto mx-auto max-w-3xl rounded-md overflow-hidden">
+    <div :class="$store.modal.visible? 'scale-100' : 'scale-0'" class="transform duration-300 relative flex-auto bg-zinc-900 drop-shadow-md">
+      <div class="relative h-96">
+        <video class="w-full brightness-[60%] object-cover h-full" autoPlay muted loop :poster="$store.modal.movie.thumbnailUrl" :src="$store.modal.movie.videoUrl"></video>
+        <div @click="$store.modal.close()" class="cursor-pointer absolute top-3 right-3 h-10 w-10 rounded-full bg-black bg-opacity-70 flex items-center justify-center">
+          <div class="text-white w-6"> <!-- x-mark -->
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </div> <!-- x-mark -->
+        </div>
+        <div class="absolute bottom-[10%] left-10">
+          <p class="text-white text-3xl md:text-4xl h-full lg:text-5xl font-bold mb-8" x-text="$store.modal.movie.title"></p>
+          <div class="flex flex-row gap-4 items-center">
+            <div class="cursor-pointer group/item w-6 h-6 lg:w-10 lg:h-10 border-white border-2 rounded-full flex justify-center items-center transition hover:border-neutral-300">
+            	<PlayButton clickHandler="playMovie($store.model.movie.id)" />
+              <!-- begin add to favorites -->
+              <template x-if="!$store.favorites.isFavorite($store.modal.movie)">
+                <div @click="$store.favorites.addFavorite($store.modal.movie)" class="text-white group-hover/item:text-neutral-300 w-4 lg:w-6">
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                  </svg>
+                </div>
+              </template>
+              <template x-if="$store.favorites.isFavorite($store.modal.movie)">
+                <div @click="$store.favorites.removeFavorite($store.modal.movie)" class="text-white group-hover/item:text-neutral-300 w-4 lg:w-6">
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+                  </svg>
+                </div>
+              </template>
+              <!-- end add to favorites -->
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="px-12 py-8">
+        <p class="text-green-400 font-semibold text-lg">New</p>
+        <p class="text-white text-lg" x-text="$store.modal.movie.duration"></p>
+        <p class="text-white text-lg" x-text="$store.modal.movie.genre"></p>
+        <p class="text-white text-lg" x-text="$store.modal.movie.description"></p>
+      </div>
+    </div>
+  </div>
+</div>

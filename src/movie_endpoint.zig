@@ -77,7 +77,7 @@ fn getMovie(e: *zap.SimpleEndpoint, r: zap.SimpleRequest) void {
                 }
             } else if (self.movies.get(id)) |movie| {
                 if (std.mem.endsWith(u8, path, "/play")) {
-                    self.renderer.render(r, "web/templates/movie.html", .{ .id = movie.id }) catch return;
+                    self.renderer.render(r, "web-out/movie.html", .{ .id = movie.id }) catch return;
                 } else {
                     const json = std.json.stringifyAlloc(self.allocator, movie, .{}) catch return;
                     defer self.allocator.free(json);

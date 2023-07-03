@@ -1,0 +1,259 @@
+---
+import Layout from '../layouts/Layout.astro';
+import BillBoard from '../components/BillBoard.astro';
+import InfoModal from '../components/InfoModal.astro';
+---
+
+<Layout title="Welcome to Beachtube">
+  <script is:raw>
+    function playMovie(id) {
+      location.href = '/movies/' + id + '/play'
+    }
+    document.addEventListener('alpine:init', () => {
+      Alpine.store('favorites', {
+          movies: [],
+          async init() {
+              this.movies = await (await fetch('/users/favorites')).json()
+          },
+          isFavorite(movie) {
+              return this.movies.map(x => x.id).includes(movie.id)
+          },
+          async addFavorite(movie) {
+              if (!this.isFavorite(movie)) {
+                  this.movies = await (await fetch('/users/favorites/' + movie.id, {method: 'POST'})).json()
+              }
+          },
+          async removeFavorite(movie) {
+              if (this.isFavorite(movie)) {
+                  this.movies = await (await fetch('/users/favorites/' + movie.id, {method: 'DELETE'})).json()
+              }
+          },
+      }),
+      Alpine.store('modal', {
+          visible: false,
+          movie: {},
+          close() {
+              this.visible = false
+          },
+          async open(id) {
+              this.movie = await (await fetch('/movies/' + id)).json()
+              this.visible = true
+          },
+      })
+    })
+  </script>
+  <header x-data>
+    <!-- info modal -->
+    <InfoModal />
+    <!-- navbar -->
+    <nav class="w-full fixed z-40" x-data="{ background: false, mobile: false, account: false, active: 1, menu: [
+              { id: 1, label: 'Home' },
+              { id: 2, label: 'Series' },
+              { id: 3, label: 'Films' },
+              { id: 4, label: 'New & Popular' },
+              { id: 5, label: 'My List' },
+              { id: 6, label: 'Browse by languages' }
+        ]
+      }"
+    >
+      <div class="px-4 md:px-16 py-6 flex flex-row items-center transition duration-500" :class="background ? 'bg-zinc-900 bg-opacity-90' : ''">
+        <img class="h-4 lg:h-7" src="/img/logo.png" alt="Logo">
+        <div class="flex-row ml-8 gap-7 hidden lg:flex">
+          <template x-for="item in menu" :key="item.id">
+            <div @click="active = item.id" :class="item.id == active ? 'text-white cursor-default' : 'text-gray-200 hover:text-gray-300 cursor-pointer transition'" x-text="item.label">
+            </div>
+          </template>
+        </div>
+        <div @click="mobile = !mobile" class="lg:hidden flex flex-row items-center gap-2 ml-8 cursor-pointer relative">
+          <p class="text-white text-sm">Browse</p>
+          <div class="w-4 text-white fill-white transition" :class="mobile ? 'rotate-180' : 'rotate-0'"> <!-- nav down arrow -->
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+            </svg>
+          </div> <!-- nav down arrow -->
+          <div x-show="mobile" class="bg-black w-56 absolute top-8 left-0 py-5 flex-col border-2 border-gray-800 flex">
+            <div class="flex flex-col gap-4">
+              <template x-for="item in menu" :key="item.id">
+                <div @click="active = item.id" class="px-3 text-center" :class="item.id == active ? 'text-white cursor-default' : 'text-gray-200 hover:underline cursor-pointer transition'" x-text="item.label">
+                </div>
+              </template>
+            </div>
+          </div>
+        </div>
+        <div class="flex flex-row ml-auto gap-7 items-center">
+          <div class="text-gray-200 hover:text-gray-300 cursor-pointer transition">
+            <div class="w-6">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
+              </svg>
+            </div>
+          </div>
+          <div class="text-gray-200 hover:text-gray-300 cursor-pointer transition">
+            <div class="w-6">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0" />
+              </svg>
+            </div>
+          </div>
+          <div @click="account = !account" class="flex flex-row items-center gap2 cursor-pointer relative">
+            <div class="w-6 h-6 lg:w-10 lg:h-10 rounded-md overflow-hidden">
+              <img src="{{avatar}}" alt="Profile">
+            </div>
+            <div class="w-4 text-white fill-white transition" :class="account ? 'rotate-180' : 'rotate-0'"> <!-- account menu down arrow -->
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+              </svg>
+            </div> <!-- account menu down arrow -->
+            <div x-show="account" class="bg-black w-56 absolute top-14 right-0 py-5 flex-col border-2 border-gray-800 flex" x-cloak>
+              <div class="flex flex-col gap-3">
+                <div hx-get="/users" hx-target="body" class="px-3 group/item flex flex-row gap-3 item-center w-full">
+                  <img draggable="false" class="w-8 rounded-md" src="{{avatar}}" alt="Profile">
+                  <p is:raw class="text-white text-sm group-hover/item:userline">{{name}}</p>
+                </div>
+                <hr class="bg-gray-600 border-0 h-px my-4" />
+                <div hx-delete="/sessions" hx-target="body" class="px-3 text-center text-white text-sm hover:underline">
+                  Sign out of Beachglass
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </nav>
+    <!-- billboard -->
+    <BillBoard />
+  </header>
+  <main>
+    <!-- main movie list -->
+    <section x-data="{ movies: [] }" x-init="movies = await (await fetch('/movies')).json()">
+        <article class="pb-40">
+          <div class="px-4 md:px-12 mt-4 space-y-8">
+            <p class="text-white text-md md:text-xl lg:text-2xl font-semibold mb-4">Trending Now</p>
+            <div class="grid grid-cols-4 gap-2">
+              <template x-for="movie in movies" :key="movie.id">
+                <div class="group bg-zinc-900 col-span relative h-[12vw]">
+                  <img @click="playMovie(movie.id)" :src="movie.thumbnailUrl" alt="Thumbnail" draggable="false"
+                       class="cursor-pointer object-cover transition duration shadow-xl rounded-md group-hover:opacity-90 sm:group-hover:opacity-0 delay-300 w-full h-[12vw]">
+                  <div class="opacity-0 absolute top-0 transition duration-200 z-10 invisible sm:visible delay-300 w-full scale-0 group-hover:scale-110 group-hover:-translate-y-[6vw] group-hover:translate-x-[2vw] group-hover:opacity-100">
+                    <img @click="playMovie(movie.id)" :src="movie.thumbnailUrl" alt="Thumbnail" draggable="false"
+                               class="cursor-pointer object-cover transition duration shadow-xl rounded-t-md w-full h-[12vw]">
+                    <div class="z-10 bg-zinc-800 p-2 lg:p-4 absolute w-full transition shadow-md rounded-b-md">
+                      <div class="flex flex-row items-center gap-3">
+                        <button @click="playMovie(movie.id)" class="cursor-pointer w-6 h-6 lg:w-10 lg:h-10 bg-white rounded-full flex justify-center items-center transition hover:bg-neutral-300">
+                          <div class="text-black w-4 lg:w-6"> <!-- play button -->
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6">
+                              <path fill-rule="evenodd" d="M4.5 5.653c0-1.426 1.529-2.33 2.779-1.643l11.54 6.348c1.295.712 1.295 2.573 0 3.285L7.28 19.991c-1.25.687-2.779-.217-2.779-1.643V5.653z" clip-rule="evenodd" />
+                            </svg>
+                          </div> <!-- play button -->
+                        </button>
+                        <button class="cursor-pointer group/item w-6 h-6 lg:w-10 lg:h-10 border-white border-2 rounded-full flex justify-center items-center transition hover:border-neutral-300">
+                          <!-- add to favorites -->
+                          <template x-if="!$store.favorites.isFavorite(movie)">
+                            <div @click="$store.favorites.addFavorite(movie)" class="text-white group-hover/item:text-neutral-300 w-4 lg:w-6">
+                              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                              </svg>
+                            </div>
+                          </template>
+                          <template x-if="$store.favorites.isFavorite(movie)">
+                            <div @click="$store.favorites.removeFavorite(movie)" class="text-white group-hover/item:text-neutral-300 w-4 lg:w-6">
+                              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+                              </svg>
+                            </div>
+                          </template>
+                          <!-- end add to favorites -->
+                        </button>
+                        <button @click="$store.modal.open(movie.id)" class="cursor-pointer ml-auto group/item w-6 h-6 lg:w-10 lg:h-10 border-white border-2 rounded-full flex justify-center items-center transition hover:border-neutral-300">
+                          <div class="text-white group-hover/item:text-neutral-300 w-4 lg:w-6"> <!-- down arrow to open info modal -->
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                              <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+                            </svg>
+                          </div> <!-- down arrow -->
+                        </button>
+                      </div>
+                      <p class="text-green-400 font-semibold mt-4">
+                        New <span class="text-white">2023</span>
+                      </p>
+                      <div class="flex flex-row mt-4 gap-2 items-center">
+                        <p class="text-white text-[10px] lg:text-sm" x-text="movie.duration"></p>
+                      </div>
+                      <div class="flex flex-row mt-4 gap-2 items-center">
+                        <p class="text-white text-[8px] lg:text-sm" x-text="movie.genre"></p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </template> <!--movie card -->
+            </div>
+          </div>
+        </article>
+    </section>
+    <!-- favorites list -->
+    <section x-data="$store.favorites.movies">
+      <article class="pb-40">
+        <div class="px-4 md:px-12 mt-4 space-y-8">
+          <p class="text-white text-md md:text-xl lg:text-2xl font-semibold mb-4">My List</p>
+          <div class="grid grid-cols-4 gap-2">
+            <template x-for="movie in $store.favorites.movies" :key="movie.id">
+              <div class="group bg-zinc-900 col-span relative h-[12vw]">
+                <img @click="playMovie(movie.id)" :src="movie.thumbnailUrl" alt="Thumbnail" draggable="false"
+                     class="cursor-pointer object-cover transition duration shadow-xl rounded-md group-hover:opacity-90 sm:group-hover:opacity-0 delay-300 w-full h-[12vw]">
+                <div class="opacity-0 absolute top-0 transition duration-200 z-10 invisible sm:visible delay-300 w-full scale-0 group-hover:scale-110 group-hover:-translate-y-[6vw] group-hover:translate-x-[2vw] group-hover:opacity-100">
+                  <img @click="playMovie(movie.id)" :src="movie.thumbnailUrl" alt="Thumbnail" draggable="false"
+                             class="cursor-pointer object-cover transition duration shadow-xl rounded-t-md w-full h-[12vw]">
+                  <div class="z-10 bg-zinc-800 p-2 lg:p-4 absolute w-full transition shadow-md rounded-b-md">
+                    <div class="flex flex-row items-center gap-3">
+                      <button @click="playMovie(movie.id)" class="cursor-pointer w-6 h-6 lg:w-10 lg:h-10 bg-white rounded-full flex justify-center items-center transition hover:bg-neutral-300">
+                        <div class="text-black w-4 lg:w-6"> <!-- play button -->
+                          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6">
+                            <path fill-rule="evenodd" d="M4.5 5.653c0-1.426 1.529-2.33 2.779-1.643l11.54 6.348c1.295.712 1.295 2.573 0 3.285L7.28 19.991c-1.25.687-2.779-.217-2.779-1.643V5.653z" clip-rule="evenodd" />
+                          </svg>
+                        </div> <!-- play button -->
+                      </button>
+                      <button class="cursor-pointer group/item w-6 h-6 lg:w-10 lg:h-10 border-white border-2 rounded-full flex justify-center items-center transition hover:border-neutral-300"
+                      >
+                        <!-- add to favorites -->
+                        <template x-if="!$store.favorites.isFavorite(movie)">
+                          <div @click="$store.favorites.addFavorite(movie)" class="text-white group-hover/item:text-neutral-300 w-4 lg:w-6">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                              <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                            </svg>
+                          </div>
+                        </template>
+                        <template x-if="$store.favorites.isFavorite(movie)">
+                          <div @click="$store.favorites.removeFavorite(movie)" class="text-white group-hover/item:text-neutral-300 w-4 lg:w-6">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                              <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+                            </svg>
+                          </div>
+                        </template>
+                        <!-- end add to favorites -->
+                      </button>
+                      <button @click="$store.modal.open(movie.id)" class="cursor-pointer ml-auto group/item w-6 h-6 lg:w-10 lg:h-10 border-white border-2 rounded-full flex justify-center items-center transition hover:border-neutral-300">
+                        <div class="text-white group-hover/item:text-neutral-300 w-4 lg:w-6"> <!-- down arrow to open info modal -->
+                          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+                          </svg>
+                        </div> <!-- down arrow -->
+                      </button>
+                    </div>
+                    <p class="text-green-400 font-semibold mt-4">
+                      New <span class="text-white">2023</span>
+                    </p>
+                    <div class="flex flex-row mt-4 gap-2 items-center">
+                      <p class="text-white text-[10px] lg:text-sm" x-text="movie.duration"></p>
+                    </div>
+                    <div class="flex flex-row mt-4 gap-2 items-center">
+                      <p class="text-white text-[8px] lg:text-sm" x-text="movie.genre"></p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </template> <!--movie card -->
+          </div>
+        </div>
+      </article>
+    </section>
+  </main>
+</Layout>
