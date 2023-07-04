@@ -5,7 +5,7 @@ This is based on [Beachtube](https://github.com/beachglasslabs/beachtube) with t
 ![login](https://raw.githubusercontent.com/beachglasslabs/beachtube/master/screenshots/beachtube-login.jpg)
 ![main](https://raw.githubusercontent.com/beachglasslabs/beachtube/master/screenshots/beachtube-screen.jpg)
 
-This particular project are written in ZAAX (Zig/Zap Astrojs Alpinejs htmX :stuck_out_tongue_winking_eye:):
+This particular project is written in ZAAX (Zig/Zap Astro Alpinejs htmX :stuck_out_tongue_winking_eye:):
 
 To test it out:
  1. `git clone git@github.com:beachglasslabs/astrotube.git`
