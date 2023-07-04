@@ -1,23 +1,21 @@
 {
-  "name": "beachtube",
+  "name": "astrotube",
   "private": true,
   "version": "0.0.2",
   "type": "module",
   "scripts": {
-    "serve": "npm run build && zig-out/bin/beachtube",
-    "dev:css": "npm run build:css -- --watch",
-    "build:css": "npx tailwindcss build -i web/css/main.css -o public/style.css",
-    "build:web": "npm run build:css && astro build",
-    "clean:web": "rm -rf web-out",
+    "serve": "zig-out/bin/beachtube",
     "zap": "python -m http.server --directory ~/download",
-    "build": "zig build",
-    "clean": "npm run clean:web && rm -rf zig-out",
-    "dev": "npm run build:web && npm run serve"
+    "build:css": "npx tailwindcss build -i web/css/main.css -o public/style.css",
+    "build:web": "astro build",
+    "build:zig": "zig build",
+    "build": "npm run build:css && npm run build:web && npm run build:zig",
+    "clean:web": "rm -rf web/templates/*",
+    "clean:zig": "rm -rf zig-out",
+    "clean": "npm run clean:web && npm run clean:zig",
+    "dev": "npm run build && npm run serve"
   },
   "devDependencies": {
-    "@astrojs/alpinejs": "^0.2.2",
-    "@astrojs/tailwind": "^4.0.0",
-    "@types/alpinejs": "^3.7.2",
     "alpinejs": "^3.12.3",
     "astro": "^2.7.3",
     "tailwindcss": "^3.3.2"

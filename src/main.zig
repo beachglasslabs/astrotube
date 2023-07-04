@@ -44,7 +44,7 @@ const Handler = zap.Middleware.Handler(Context);
 fn index(renderer: Template, r: zap.SimpleRequest, context: *Context) bool {
     if (context.user) |user| {
         std.debug.print("index: user is {s}\n", .{user.name});
-        renderer.render(r, "web-out/index.html", .{ .name = user.name, .avatar = user.avatar }) catch return true;
+        renderer.render(r, "web/templates/index.html", .{ .name = user.name, .avatar = user.avatar }) catch return true;
     } else {
         std.debug.print("index: user is null\n", .{});
         redirect(r);
@@ -161,8 +161,7 @@ pub fn main() !void {
             .{
                 .on_request = null,
                 .port = 3000,
-                // .public_folder = "public",
-                .public_folder = "web-out",
+                .public_folder = "public",
                 .log = true,
                 .max_clients = 100000,
             },

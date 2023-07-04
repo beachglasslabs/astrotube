@@ -112,7 +112,7 @@ pub fn UserEndpoint(comptime MovieManager: type, comptime Context: anytype) type
         fn profiles(renderer: Template, r: zap.SimpleRequest, context: *Context) void {
             if (context.user) |user| {
                 std.debug.print("profiles: user is {s}\n", .{user.name});
-                renderer.render(r, "web-out/profiles.html", .{ .name = user.name, .avatar = user.avatar }) catch return;
+                renderer.render(r, "web/templates/profiles.html", .{ .name = user.name, .avatar = user.avatar }) catch return;
             } else {
                 std.debug.print("profiles: user is null\n", .{});
             }

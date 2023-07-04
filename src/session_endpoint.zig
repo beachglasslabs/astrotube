@@ -66,7 +66,7 @@ fn getSession(e: *zap.SimpleEndpoint, r: zap.SimpleRequest) void {
     if (r.path) |path| {
         // /sessions
         if (path.len == e.settings.path.len) {
-            return self.renderer.render(r, "web-out/auth.html", .{}) catch return;
+            return self.renderer.render(r, "web/templates/auth.html", .{}) catch return;
         }
         if (self.sessionIdFromPath(path)) |id| {
             if (self.sessions.get(id)) |session| {

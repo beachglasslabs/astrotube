@@ -1,14 +1,12 @@
 import { defineConfig } from 'astro/config';
-import tailwind from "@astrojs/tailwind";
-import alpinejs from "@astrojs/alpinejs";
 
 // https://astro.build/config
 export default defineConfig({
   srcDir: './web/src',
-  publicDir: './public',
-  outDir: './web-out',
+  outDir: './web/templates',
+  publicDir: './blahblah',
   build: {
     format: 'file',
   },
-  integrations: [tailwind(), alpinejs()]
+  integrations: []
 });

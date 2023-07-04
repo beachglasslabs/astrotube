@@ -2,8 +2,6 @@
 zig-cache
 zig-out
 
-# web output
-web-out
 
 # Logs
 logs
@@ -13,6 +11,7 @@ yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
+
 
 # Package files
 node_modules
@@ -32,8 +31,11 @@ dist-ssr
 *.sln
 *.sw?
 
+
 # Build files
 public/*.css
+web/templates
+
 
 # env file with secrets
 .env
