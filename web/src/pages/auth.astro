@@ -2,7 +2,7 @@
 import Layout from '../layouts/Layout.astro';
 ---
 
-<Layout title="Welcome to Astrotube">
+<Layout title="Welcome to Beachglass Demo">
   <div class="relative h-full w-full bg-[url('img/hero.jpg')] bg-no-repeat bg-center bg-fixed bg-cover">
     <div class="bg-black w-full h-full lg:bg-opacity-50">
       <nav class="px-12 py-5">
@@ -44,7 +44,7 @@ import Layout from '../layouts/Layout.astro';
             </div>
           </div>
           <p class="text-neutral-500 mt-12">
-            <span x-text="login ? 'First time using Beachglass?' : 'Already have an account?'"></span>
+            <span x-text="login ? 'First time using Beachglass Demo?' : 'Already have an account?'"></span>
             <span @click="login = ! login" class="text-white ml-1 hover:underline cursor-pointer" x-text="login ? 'Join us' : 'Sign in'"></span>.
           </p>
           <p x-text="message" x-show="message !== ''" class="text-white mt-12"></p>

@@ -1,10 +1,10 @@
 {
-  "name": "astrotube",
+  "name": "beachdemo",
   "private": true,
-  "version": "0.0.2",
+  "version": "0.0.3",
   "type": "module",
   "scripts": {
-    "serve": "zig-out/bin/beachtube",
+    "serve": "zig-out/bin/beachdemo",
     "zap": "python -m http.server --directory ~/download",
     "build:css": "npx tailwindcss build -i web/css/main.css -o public/style.css",
     "build:web": "astro build",
