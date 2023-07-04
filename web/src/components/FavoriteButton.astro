@@ -1,0 +1,22 @@
+---
+---
+
+<button class="cursor-pointer group/item w-6 h-6 lg:w-10 lg:h-10 border-white border-2 rounded-full flex justify-center items-center transition hover:border-neutral-300"
+>
+  <!-- add to favorites -->
+  <template x-if="!$store.favorites.isFavorite(movie)">
+    <div @click="$store.favorites.addFavorite(movie)" class="text-white group-hover/item:text-neutral-300 w-4 lg:w-6">
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+      </svg>
+    </div>
+  </template>
+  <template x-if="$store.favorites.isFavorite(movie)">
+    <div @click="$store.favorites.removeFavorite(movie)" class="text-white group-hover/item:text-neutral-300 w-4 lg:w-6">
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+      </svg>
+    </div>
+  </template>
+  <!-- end add to favorites -->
+</button>

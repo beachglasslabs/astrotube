@@ -1,0 +1,15 @@
+---
+---
+
+<div x-show="account" class="bg-black w-56 absolute top-14 right-0 py-5 flex-col border-2 border-gray-800 flex" x-cloak>
+  <div class="flex flex-col gap-3">
+    <div hx-get="/users" hx-target="body" class="px-3 group/item flex flex-row gap-3 item-center w-full">
+      <img draggable="false" class="w-8 rounded-md" src="{{avatar}}" alt="Profile">
+      <p is:raw class="text-white text-sm group-hover/item:userline">{{name}}</p>
+    </div>
+    <hr class="bg-gray-600 border-0 h-px my-4" />
+    <div hx-delete="/sessions" hx-target="body" class="px-3 text-center text-white text-sm hover:underline">
+      Sign out of Blocktube
+    </div>
+  </div>
+</div>
